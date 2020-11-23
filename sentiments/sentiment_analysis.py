@@ -13,74 +13,29 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import nltk
 
 nltk.download('vader_lexicon')
-def sentiment_analysis(clear_sentences_dict):
+def sentiment_analysis(comment):
     sentences_scores = {}
-    for key, comment in clear_sentences_dict.items():
-        sid = SentimentIntensityAnalyzer()
-        score = sid.polarity_scores(comment)
-        print('Score:', score)
-        if score['compound'] >= 0.05:
-            print(comment)
-            sentences_scores[key] = [comment, score['compound']]
-            print("Positive")
 
-        elif score['compound'] <= - 0.05:
-            print(comment)
-            sentences_scores[key] = [comment, score['compound']]
-            print("Negative")
+    sid = SentimentIntensityAnalyzer()
+    score = sid.polarity_scores(comment)
+    print('Score:', score)
+    if score['compound'] >= 0.05:
+        print(comment)
+        #sentences_scores[key] = [comment, score['compound']]
+        print("Positive")
 
-        else:
-            print(comment)
-            sentences_scores[key] = [comment, score['compound']]
-            print("Neutral")
+    elif score['compound'] <= - 0.05:
+        print(comment)
+        #sentences_scores[key] = [comment, score['compound']]
+        print("Negative")
 
-    is_bad_review = []
-    compund = []
-    df = pd.DataFrame.from_dict(clear_sentences_dict, orient='index', columns=['comment'])
+    else:
+        print(comment)
+        #sentences_scores[key] = [comment, score['compound']]
+        print("Neutral")
 
-    for key, comment in clear_sentences_dict.items():
-        sid = SentimentIntensityAnalyzer()
-        score = sid.polarity_scores(comment)
+sentiment_analysis('I am happy but today my mom died')
 
-        if score['pos'] == score['neg']:
-            is_bad_review.append(0)
-            compund.append(score['compound'])
-
-        elif score['pos'] > score['neg']:
-            is_bad_review.append(-1)
-            compund.append(score['compound'])
-
-        else:
-            is_bad_review.append(1)
-            compund.append(score['compound'])
-
-    df['is_bad_review'] = is_bad_review
-    df['compund'] = compund
-
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-
-    for x in [-1, 0, 1]:
-        subset = df[df['is_bad_review'] == x]
-
-        # Draw the density plot
-        if x == -1:
-            label = "Good reviews"
-
-        elif x == 0:
-            label = "Neutral"
-
-        else:
-            label = "Bad reviews"
-
-        ax = plt.gca()
-        subset = np.array(subset['compund']).astype(np.float)
-
-        sns.distplot(subset, ax=ax, hist=False, label=label)
-        ax.set_xlabel('compound score')
-        ax.set_ylabel('univariate distribution of observations')
-
-    plt.show()
 
 
 from nltk.corpus import movie_reviews as mr
@@ -88,50 +43,62 @@ from nltk import pos_tag
 from nltk.corpus import sentiwordnet as swn
 from nltk.wsd import lesk
 
+from nltk.corpus import wordnet
 
-def sentiment_analysis2(names):
+def get_wordnet_pos(treebank_tag):
+
+    if treebank_tag.startswith('J'):
+        return wordnet.ADJ
+    elif treebank_tag.startswith('V'):
+        return wordnet.VERB
+    elif treebank_tag.startswith('N'):
+        return wordnet.NOUN
+    elif treebank_tag.startswith('R'):
+        return wordnet.ADV
+    else:
+        return None
+
+def sentiment_analysis2(text):
     test = []
-    for i in range(len(names)):
-        if isinstance(comments[i], str):
+    # tokenize text and remove puncutation
+    text = [word.strip(string.punctuation) for word in text.split(" ")]
+    # text = [word for word in text.split(" ")]
+    print('Text:', text)
+    # remove words that contain numbers
+    text = [word for word in text if not any(c.isdigit() for c in word)]
+    # remove stop words
+    stop = stopwords.words('english')
+    text = [x for x in text if x not in stop]
+    # remove empty tokens
+    text = [t for t in text if len(t) > 0]
+    # pos tag text
+    pos_tags = pos_tag(text)
+    print(pos_tags)
+    # lemmatize text
+    text = [WordNetLemmatizer().lemmatize(t[0],get_wordnet_pos(t[1])) if get_wordnet_pos(t[1]) else t[0] for t in pos_tags]
 
-            # text = tk(comments[i])
-            # lower text
-            text = comments[i].lower()
+    # remove words with only one letter
+    text = [t for t in text if len(t) > 1]
 
-            # tokenize text and remove puncutation
-            text = [word.strip(string.punctuation) for word in text.split(" ")]
-            # text = [word for word in text.split(" ")]
-            print('Text:', text)
-            # remove words that contain numbers
-            text = [word for word in text if not any(c.isdigit() for c in word)]
-            # remove stop words
-            stop = stopwords.words('english')
-            text = [x for x in text if x not in stop]
-            # remove empty tokens
-            text = [t for t in text if len(t) > 0]
-            # pos tag text
-            pos_tags = pos_tag(text)
-            # lemmatize text
-            text = [WordNetLemmatizer().lemmatize(t[0], get_wordnet_pos(t[1])) for t in pos_tags]
-            # remove words with only one letter
-            text = [t for t in text if len(t) > 1]
-            [all_words.append(word) for word in text]
-            # join all
-            text = " ".join(text)
-            print(text)
-            mr_positive = 0
-            mr_negative = 0
-            for word, tag in pos_tags:
-                synset = lesk(text, word, tag)
-                if synset is not None:
-                    mr_positive += swn.senti_synset(synset.name()).pos_score()
-                    print(mr_positive)
+    # join all
+    text = " ".join(text)
+    print(text)
+    mr_positive = 0
+    mr_negative = 0
+    for word, tag in pos_tags:
+        synset = lesk(text, word, tag)
+        print(synset)
+        if synset is not None:
+            mr_positive += swn.senti_synset(synset.name()).pos_score()
+            print(mr_positive)
 
-                    mr_negative += swn.senti_synset(synset.name()).neg_score()
-                    print(mr_negative)
-
-            test.append('pos' if mr_positive > mr_negative else 'neg')
+            mr_negative += swn.senti_synset(synset.name()).neg_score()
+            print(mr_negative)
+    print(mr_positive)
+    print(mr_negative)
+    test.append('pos' if mr_positive > mr_negative else 'neg')
     print(test)
 
     return test
+
 
