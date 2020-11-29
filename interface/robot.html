@@ -1,0 +1,77 @@
+<link rel="stylesheet" href="robot.css">
+
+
+
+
+<div class="face">
+    <div class="eye left">
+        <div class="eyelid upper"></div>
+        <div class="eyelid lower"></div>
+    </div>
+    <div class="eye right">
+        <div class="eyelid upper"></div>
+        <div class="eyelid lower"></div>
+    </div>
+</div>
+
+<script src="robot.js"></script>
+<script>
+    var HttpClient = function() {
+    this.get = function(aUrl, aCallback) {
+        var anHttpRequest = new XMLHttpRequest();
+        anHttpRequest.onreadystatechange = function() { 
+            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                aCallback(anHttpRequest.responseText);
+        }
+
+        anHttpRequest.open( "GET", aUrl, true );            
+        anHttpRequest.send( null );
+    }
+
+    function toggleFullScreen() {
+        var doc = window.document;
+        var docEl = doc.body;
+
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+        if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
+        }
+        else {
+            cancelFullScreen.call(doc);
+        }
+    }
+}
+</script>
+
+<div class="buttons">
+    <button onclick="eyes.startBlinking()">Start Blinking</button>
+    <button onclick="eyes.stopBlinking()">Stop Blinking</button>
+    <button onclick="eyes.blink()" >Blink</button>
+    <button onclick="eyes.express({type: 'happy'})" >Happy</button>
+    <button onclick="eyes.express({type: 'sad'})" >Sad</button>
+    <button onclick="eyes.express({type: 'angry'})" >Mad</button>
+    <button onclick="eyes.express({type: 'focused'})" >Focused</button>
+    <button onclick="eyes.express({type: 'confused'})" >Confused</button>
+    <button onclick="toggleFullScreen()" >FullScreen</button>
+</div>
+
+<script>
+    // document.body.requestFullscreen();
+    eyes.startBlinking()
+    let mood = '';
+    function getMood() {
+        var client = new HttpClient();
+        client.get('http://localhost:3000/mood', function(response) {
+            // do something with response
+            mood = response.replace(/\"/g, "");
+            console.log('Mood:', mood)
+            if (mood === 'happy' || mood === 'sad' || mood === 'angry') {
+                eyes.express({type: mood})
+            }
+        });
+    }
+
+    setInterval(getMood, 1000);
+</script>
