@@ -1,8 +1,5 @@
 <link rel="stylesheet" href="robot.css">
 
-
-
-
 <div class="face">
     <div class="eye left">
         <div class="eyelid upper"></div>
@@ -63,15 +60,26 @@
     let mood = '';
     function getMood() {
         var client = new HttpClient();
-        client.get('http://localhost:3000/mood', function(response) {
+        // let url = 'http://localhost:3000/mood'
+        let url = 'https://chatbot-mood.herokuapp.com/mood'
+        client.get(url, function(response) {
             // do something with response
             mood = response.replace(/\"/g, "");
             console.log('Mood:', mood)
-            if (mood === 'happy' || mood === 'sad' || mood === 'angry') {
+            if (mood === 'happy' || mood === 'sad' || mood === 'angry' || mood === 'focused' || mood === 'confused') {
                 eyes.express({type: mood})
+            }
+            else if (mood === 'blink') {
+                eyes.blink()
+            }
+            else if (mood === 'start_blinking') {
+                eyes.startBlinking()
+            }
+            else if (mood === 'stop_blinking') {
+                eyes.stopBlinking()
             }
         });
     }
-
+    // sleep until next GET request
     setInterval(getMood, 1000);
 </script>

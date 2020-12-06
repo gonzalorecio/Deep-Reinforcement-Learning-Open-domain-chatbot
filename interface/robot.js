@@ -43,7 +43,7 @@ class EyeController {
     express({
       type = '',
       // level = 3,  // 1: min, 5: max
-      duration = 1000,
+      duration = 1500, //1000,
       enterDuration = 75,
       exitDuration = 75,
     }) {
