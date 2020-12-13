@@ -12,6 +12,7 @@ app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
 let PORT = process.env.PORT || 3000
+let MOOD = "neutral";
 
 app.listen(PORT, () => {
  console.log("Server running on port 3000");
@@ -26,17 +27,15 @@ app.get("/robot", (req, res, next) => {
     res.json(["Tony","Lisa","Michael","Ginger","Food"]);
 });
 
-let MOOD = "neutral";
-
 app.get("/mood", (req, res, next) => {
     res.json(MOOD)
-    MOOD = "neutral";
+    // MOOD = "neutral";  // uncomment make expression last for a short period
 })
 
 app.post("/mood", (req, res) => {
     console.log(req)
     var action = req.body.action;
-    if (action == 'happy' || action === 'sad' || action === 'angry' || action === 'focused' || action === 'confused' || action === 'blink' || action === 'start_blinking' || action === 'stop_blinking') {
+    if (action == 'neutral' || action == 'happy' || action === 'sad' || action === 'angry' || action === 'focused' || action === 'confused' || action === 'blink' || action === 'start_blinking' || action === 'stop_blinking') {
         MOOD = action;
     }
     res.json(action)

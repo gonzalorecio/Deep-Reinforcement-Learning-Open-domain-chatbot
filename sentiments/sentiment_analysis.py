@@ -13,6 +13,10 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import nltk
 
 nltk.download('vader_lexicon')
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+
 def sentiment_analysis(comment):
     sentences_scores = {}
 

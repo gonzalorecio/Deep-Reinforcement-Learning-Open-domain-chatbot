@@ -13,7 +13,7 @@
     --face-width: 100vw;
     --eye-size: 33.33vmin;
     --eye-color: rgb(153, 255, 213);
-    --eyelid-color: black;
+    --eyelid-color: rgb(0, 0, 0)
 }
 
 

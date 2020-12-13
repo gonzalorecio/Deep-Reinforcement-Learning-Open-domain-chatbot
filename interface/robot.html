@@ -46,6 +46,7 @@
     <button onclick="eyes.startBlinking()">Start Blinking</button>
     <button onclick="eyes.stopBlinking()">Stop Blinking</button>
     <button onclick="eyes.blink()" >Blink</button>
+    <button onclick="eyes.express({type: 'neutral'})" >Neutral</button>
     <button onclick="eyes.express({type: 'happy'})" >Happy</button>
     <button onclick="eyes.express({type: 'sad'})" >Sad</button>
     <button onclick="eyes.express({type: 'angry'})" >Mad</button>
@@ -58,6 +59,7 @@
     // document.body.requestFullscreen();
     eyes.startBlinking()
     let mood = '';
+    let currentMood = '';
     function getMood() {
         var client = new HttpClient();
         // let url = 'http://localhost:3000/mood'
@@ -66,18 +68,21 @@
             // do something with response
             mood = response.replace(/\"/g, "");
             console.log('Mood:', mood)
-            if (mood === 'happy' || mood === 'sad' || mood === 'angry' || mood === 'focused' || mood === 'confused') {
-                eyes.express({type: mood})
+            if (mood !== currentMood) {
+                if (mood === 'neutral' || mood === 'happy' || mood === 'sad' || mood === 'angry' || mood === 'focused' || mood === 'confused') {
+                    eyes.express({type: mood})
+                }
+                else if (mood === 'blink') {
+                    eyes.blink()
+                }
+                else if (mood === 'start_blinking') {
+                    eyes.startBlinking()
+                }
+                else if (mood === 'stop_blinking') {
+                    eyes.stopBlinking()
+                }
             }
-            else if (mood === 'blink') {
-                eyes.blink()
-            }
-            else if (mood === 'start_blinking') {
-                eyes.startBlinking()
-            }
-            else if (mood === 'stop_blinking') {
-                eyes.stopBlinking()
-            }
+            currentMood = mood;
         });
     }
     // sleep until next GET request
