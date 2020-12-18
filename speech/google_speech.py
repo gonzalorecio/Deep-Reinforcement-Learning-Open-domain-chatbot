@@ -11,7 +11,7 @@ def audio_file_to_text(filename = "/Users/jreventos/Desktop/MAI/Semester 3/CIR/M
         print(text)
 
 
-def speech_to_audio(lang='es-ES"'):
+def speech_to_audio(lang='es-ES'):
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
@@ -19,17 +19,19 @@ def speech_to_audio(lang='es-ES"'):
         audio = recognizer.listen(source)
         try:
             print("Recognizing...")
-            query = recognizer.recognize_google(audio,language=lang)
+            query = recognizer.recognize_ibm(audio,language=lang)
+            print(query.lower())
+            return query.lower()
         except sr.UnknownValueError:
             print("Could not understand audio")
-        print(query.lower())
+        
 
 
 
 
 import pyttsx3
 
-def text_to_speech(text =  "Koke tiene un retraso mental, pobrecito me da un poco de pena a veces.", speed = 200, vol=1.0):
+def text_to_speech(text =  "Koke tiene un retraso mental, pobrecito me da un poco de pena a veces.", speed = 200, vol=1.0, voice=14):
     '''
     Transform text to speech.
 
@@ -41,9 +43,9 @@ def text_to_speech(text =  "Koke tiene un retraso mental, pobrecito me da un poc
 
     # Change voice
     voices = engine.getProperty('voices')
-    #for i in range(len(voices)):
-     #   print(i, voices[i])
-    engine.setProperty('voice', voices[14].id)
+    # for i in range(len(voices)):
+    #     print(i, voices[i])
+    engine.setProperty('voice', voices[voice].id)
 
     # Change rate
     rate = engine.getProperty('rate')

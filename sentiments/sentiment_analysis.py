@@ -27,16 +27,19 @@ def sentiment_analysis(comment):
         print(comment)
         #sentences_scores[key] = [comment, score['compound']]
         print("Positive")
+        return 1
 
     elif score['compound'] <= - 0.05:
         print(comment)
         #sentences_scores[key] = [comment, score['compound']]
         print("Negative")
+        return -1
 
     else:
         print(comment)
         #sentences_scores[key] = [comment, score['compound']]
         print("Neutral")
+        return 0
 
 sentiment_analysis('I am happy but today my mom died')
 
