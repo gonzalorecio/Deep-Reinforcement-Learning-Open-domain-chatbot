@@ -19,7 +19,7 @@ def speech_to_audio(lang='es-ES'):
         audio = recognizer.listen(source)
         try:
             print("Recognizing...")
-            query = recognizer.recognize_ibm(audio,language=lang)
+            query = recognizer.recognize_google(audio,language=lang)
             print(query.lower())
             return query.lower()
         except sr.UnknownValueError:
