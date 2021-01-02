@@ -13,6 +13,7 @@ app.set("views", path.join(__dirname, "views"));
 
 let PORT = process.env.PORT || 3000
 let MOOD = "neutral";
+let STATUS = ""
 
 app.listen(PORT, () => {
  console.log("Server running on port 3000");
@@ -32,6 +33,10 @@ app.get("/mood", (req, res, next) => {
     // MOOD = "neutral";  // uncomment make expression last for a short period
 })
 
+app.get("/internal_state", (req, res, next) => {
+    res.json(STATUS)
+})
+
 app.post("/mood", (req, res) => {
     console.log(req)
     var action = req.body.action;
@@ -39,4 +44,13 @@ app.post("/mood", (req, res) => {
         MOOD = action;
     }
     res.json(action)
+})
+
+app.post("/internal_state", (req, res) => {
+    console.log(req)
+    var status = req.body.status;
+    if (status == 'thinking' || status == 'listening' || status === '' ) {
+        STATUS = status;
+    }
+    res.json(status)
 })

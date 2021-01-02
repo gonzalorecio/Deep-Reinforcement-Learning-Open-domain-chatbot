@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="robot.css">
 
+
+
 <div class="face">
+    <div class="info-closed" id='infoDiv'>
+        <p class='loading' id="statusText"></p>
+    </div>
     <div class="eye left">
         <div class="eyelid upper"></div>
         <div class="eyelid lower"></div>
@@ -53,13 +58,19 @@
     <button onclick="eyes.express({type: 'focused'})" >Focused</button>
     <button onclick="eyes.express({type: 'confused'})" >Confused</button>
     <button onclick="toggleFullScreen()" >FullScreen</button>
+    <button onclick="setStateText('listening')" >Listening</button>
+    <button onclick="setStateText('thinking')" >Thinking</button>
+    <button onclick="setStateText('')" >Close Info</button>
 </div>
 
 <script>
     // document.body.requestFullscreen();
     eyes.startBlinking()
+
     let mood = '';
-    let currentMood = '';
+    let currentMood  = '';
+    let currentState = '';
+
     function getMood() {
         var client = new HttpClient();
         // let url = 'http://localhost:3000/mood'
@@ -85,6 +96,49 @@
             currentMood = mood;
         });
     }
+
+    function getState() {
+        var client = new HttpClient();
+        // let url = 'http://localhost:3000/mood'
+        let url = 'https://chatbot-mood.herokuapp.com/internal_state'
+        client.get(url, function(response) {
+            // do something with response
+            state = response.replace(/\"/g, "");
+            console.log('State:', state)
+            if (state !== currentState) {
+                setStateText(state)
+            }
+            currentState = state;
+        });
+    }
+
+    function openInfo() {
+        let infoDiv = document.getElementById("infoDiv");
+        infoDiv.className = 'info'
+    }
+
+    function closeInfo() {
+        let infoDiv = document.getElementById("infoDiv");
+        infoDiv.className = 'info-closed'
+    }
+
+    function setStateText(state) {
+        if (state === 'listening') {
+            document.getElementById("statusText").innerHTML = "I'm listening";
+            openInfo();
+        }
+        else if (state === 'thinking') {
+            
+            document.getElementById("statusText").innerHTML = "Thinking";
+            openInfo();
+        }
+        else {
+            document.getElementById("statusText").innerHTML = "";
+            closeInfo();
+        }
+    }
+
     // sleep until next GET request
-    setInterval(getMood, 1000);
+    setInterval(getMood, 500);
+    setInterval(getState, 500);
 </script>
