@@ -20,7 +20,7 @@ torch.manual_seed(SEED)
 torch.backends.cudnn.deterministic = True
 
 
-# BERT tolenizer
+# BERT tokenizer
 from transformers import BertTokenizer
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -225,7 +225,6 @@ def train(model, iterator, optimizer, criterion):
     
     epoch_loss = 0
     epoch_acc = 0
-    
     model.train()
     
     for batch in iterator:
@@ -277,7 +276,8 @@ def epoch_time(start_time, end_time):
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
     return elapsed_mins, elapsed_secs
 
-N_EPOCHS = 1
+N_EPOCHS = 5
+EARLY_STOPPING = 20
 
 best_valid_loss = float('inf')
 
