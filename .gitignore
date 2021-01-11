@@ -1,5 +1,6 @@
 # Custom
 interface/node_modules/*
+sentiments/BERT_sentiment.pt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
