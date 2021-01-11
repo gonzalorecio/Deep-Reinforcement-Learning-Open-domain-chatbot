@@ -11,7 +11,7 @@ def audio_file_to_text(filename = "/Users/jreventos/Desktop/MAI/Semester 3/CIR/M
         print(text)
 
 
-def speech_to_audio(lang='es-ES'):
+def speech_to_audio(lang='es-ES', chatbot_face=None):
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         print("Listening...")
@@ -19,6 +19,8 @@ def speech_to_audio(lang='es-ES'):
         audio = recognizer.listen(source)
         try:
             print("Recognizing...")
+            if chatbot_face is not None: 
+                chatbot_face.status_recognizing()
             query = recognizer.recognize_google(audio,language=lang)
             print(query.lower())
             return query.lower()
