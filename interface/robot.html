@@ -3,7 +3,7 @@
 
 
 <div class="face">
-    <div class="info-closed" id='infoDiv'>
+    <div class="info-closed" id='infoDiv' style="display: inline-block;">
         <p class='loading' id="statusText"></p>
     </div>
     <div class="eye left">
@@ -60,6 +60,7 @@
     <button onclick="toggleFullScreen()" >FullScreen</button>
     <button onclick="setStateText('listening')" >Listening</button>
     <button onclick="setStateText('thinking')" >Thinking</button>
+    <button onclick="setStateText('Custom text')" >Custom text</button>
     <button onclick="setStateText('')" >Close Info</button>
 </div>
 
@@ -132,9 +133,13 @@
             document.getElementById("statusText").innerHTML = "Thinking";
             openInfo();
         }
-        else {
+        else if (state === "") {
             document.getElementById("statusText").innerHTML = "";
             closeInfo();
+        }
+        else {
+            document.getElementById("statusText").innerHTML = state;
+            openInfo();
         }
     }
 

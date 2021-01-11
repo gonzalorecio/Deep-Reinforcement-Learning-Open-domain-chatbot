@@ -1,0 +1,20 @@
+{
+  "name": "chatbot-mood",
+  "description": "Mood for CIR final project chatbot",
+  "version": "1.0.0",
+  "engines": {
+    "node": "12.x"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "main": "app.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "pug": "^3.0.0"
+  },
+  "devDependencies": {},
+  "author": "Gonzalo",
+  "license": "ISC"
+}

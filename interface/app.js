@@ -49,8 +49,9 @@ app.post("/mood", (req, res) => {
 app.post("/internal_state", (req, res) => {
     console.log(req)
     var status = req.body.status;
-    if (status == 'thinking' || status == 'listening' || status === '' ) {
-        STATUS = status;
-    }
+    // if (status == 'thinking' || status == 'listening' || status === '' ) {
+    //     STATUS = status;
+    // }
+    STATUS = status
     res.json(status)
 })

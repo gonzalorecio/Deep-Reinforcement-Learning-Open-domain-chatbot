@@ -93,6 +93,7 @@ body {
     vertical-align: middle;
     text-align: center;
     animation: slide-up 0.4s ease;
+    padding:1.1%;
 }
 
 .info-closed {
@@ -111,12 +112,14 @@ body {
     vertical-align: middle;
     text-align: center;
     animation: slide-out 0.4s ease;
+    padding: 1%;
 }
 
 
 
 #statusText {
-    font-size: 36px;
+    /* font-size: 36px; */
+    font-size: 1.85vw;
     font-family: sans-serif;
     color: rgb(226, 226, 226);
     opacity: 1;
