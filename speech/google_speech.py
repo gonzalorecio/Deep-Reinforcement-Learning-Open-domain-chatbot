@@ -43,7 +43,7 @@ def text_to_speech(text =  "Koke tiene un retraso mental, pobrecito me da un poc
 
     # Change voice
     voices = engine.getProperty('voices')
-    # for i in range(len(voices)):
+    #for i in range(len(voices)):
     #     print(i, voices[i])
     engine.setProperty('voice', voices[voice].id)
 

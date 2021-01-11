@@ -1,8 +1,9 @@
-from transformers import  BertModel
+from transformers import  BertModel, BertTokenizer
+import torch
+import torch.nn as nn
+import requests
 
 bert = BertModel.from_pretrained('bert-base-uncased')
-
-import torch.nn as nn
 
 
 # Get embeddings for our text, use the pre-trained transformer model.
@@ -60,3 +61,5 @@ class BERTGRUSentiment(nn.Module):
         # output = [batch size, out dim]
 
         return output
+
+
