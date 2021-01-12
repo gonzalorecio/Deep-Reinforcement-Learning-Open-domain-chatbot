@@ -124,7 +124,6 @@ class Chatbot:
         self.face.status_custom('Welcome to our chatbot interface! I will be ready in a few seconds.')
         self.model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-        self.answer_list = []
         self.reset_chatbot(lang=lang)
         self.speak('Welcome to our chatbot interface. In a few seconds you can start a conversation with me. Now I am loading the system, I will be ready in a second!')
         print('Chatbot ready.')
@@ -189,6 +188,7 @@ class Chatbot:
         # Chatbot welcome
         self.reset_chatbot(lang=self.lang)
         question = ''
+        previous_answer =''
         while (question != 'goodbye'):
             question = self.listen_and_get_question()
             if question is None:
@@ -197,21 +197,23 @@ class Chatbot:
                 continue
             print('Question:', question)
             answer = self.generate_answer(question)
-            if answer in self.answer_list:
-                self.face.status_custom('This conversation has ended')
-                self.speak('This conversation has ended.')
-                print('Conversation ended')
-                break
-            else:
-                self.answer_list.append(answer)
+
+            if answer != previous_answer:
                 self.face.mood_prediction(answer)
                 self.face.status_custom(answer)
                 print('Answer:', answer)
                 self.speak(answer)
+                previous_answer = answer
+                continue
+            else:
+                self.face.status_custom('This conversation has ended')
+                self.speak('This conversation has ended.')
+                print('Conversation ended')
+                break
 
 
             # self.reset_chatbot(lang=self.lang)
             # print(self.chat_history_ids)
 
-chatbot = Chatbot(lang='en')
+chatbot = Chatbot(lang='es')
 chatbot.run_chat()
