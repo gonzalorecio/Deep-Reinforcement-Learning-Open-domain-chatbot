@@ -123,24 +123,24 @@ class Chatbot:
         #self.model = AutoModelWithLMHead.from_pretrained("ncoop57/DiGPTame-medium")
 
         # Display instructions:
-        self.initial_instructions(lang=lang)
+        #self.initial_instructions(lang=lang)
 
         # Reset chatbot
         self.reset_chatbot(lang=lang)
         #self.speak('Welcome to our chatbot interface. In a few seconds you can start a conversation with me. Now I am loading the system, I will be ready in a second!')
 
-        # Welcome message
-        if lang == 'en':
-            self.face.status_custom('Hey I am CIRREL bot!')
-            self.speak('Hey my name is CIRREL, and I am a chatbot developed by Gonzalo Recio and Jana Reventós.   '
-                       'In a few seconds you can start a conversation with me.   '
-                       'In the blink of an eye, I will be ready.')
-        else:
-            self.face.status_custom('Hola, me llamo CIRREL!')
-            self.speak(
-                'Hola mi nombre es CIRREL, y soy un chatbot creado por Gonzalo Recio y Jana Reventós.   '
-                'En unos segundos podrás empezar una conversación conmigo.   '
-                'Estaré preparado en menos de un abrir y cerrar de ojos!')
+        #Welcome message
+        # if lang == 'en':
+        #     self.face.status_custom('Hey I am chatbot!')
+        #     self.speak('Hey! I am a chatbot developed by Gonzalo Recio and Jana Reventós.   '
+        #                'In a few seconds you can start a conversation with me.   '
+        #                'In the blink of an eye, I will be ready.')
+        # else:
+        #     self.face.status_custom('Hola, soy un chatbot!')
+        #     self.speak(
+        #         'Hola! Soy un chatbot creado por Gonzalo Recio y Jana Reventós.   '
+        #         'En unos segundos podrás empezar una conversación conmigo.   '
+        #        'Estaré preparado en menos de un abrir y cerrar de ojos!')
 
         print('Chatbot ready.')
 
@@ -148,9 +148,9 @@ class Chatbot:
     def initial_instructions(self,lang='en'):
 
         if lang == 'en':
-            text1 = 'Please read the following instructions (1-7) before starting the conversation:'
+            text1 = 'Please read the following instructions (1-8) before starting the conversation:'
         else:
-            text1 = 'Porfavor lea las siguientes instrucciones (1-7) antes de empezar la conversación:'
+            text1 = 'Porfavor lea las siguientes instrucciones (1-8) antes de empezar la conversación:'
         self.face.status_custom(text1)
         self.speak(text1)
 
@@ -211,6 +211,14 @@ class Chatbot:
             inst7 = '7. Cuando hayas escuchado la respuesta podrás volver a responder al chatbot.'
         self.face.status_custom(inst7)
         self.speak(inst7)
+
+        # Instruction 8
+        if lang == 'en':
+            inst8 = '8. At the end, a screen with a questionnaire to fill out will be displayed.'
+        else:
+            inst8 = '8. Al final de la conversación, un cuestionario a rellenar aparecerá. .'
+        self.face.status_custom(inst8)
+        self.speak(inst8)
 
     def define_voice(self,lang='en'):
         if lang == 'es':
@@ -302,7 +310,12 @@ class Chatbot:
                     self.face.status_custom('Esta conversación ha terminado.')
                     self.speak('Esta conversación ha terminado. Ha sido un placer hablar contigo. Muchas gracias!')
                     print('Conversación terminada.')
+
                 break
+        if self.lang == 'en':
+            web.open('https://docs.google.com/forms/d/e/1FAIpQLSfZ4U1pSPwSFOsC3bl46QtRW3HoH1-6XQbUOMH1u0Wjx4lnfg/viewform?usp=sf_link')
+        else:
+            web.open("https://docs.google.com/forms/d/e/1FAIpQLSdg68q2xtkrdaabnCpIjIQylo7h3Opywpkjy-OqXSCSeq0_cg/viewform?usp=sf_link")
         self.face.status_none()
             # self.reset_chatbot(lang=self.lang)
             # print(self.chat_history_ids)
