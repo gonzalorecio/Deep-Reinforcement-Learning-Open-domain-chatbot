@@ -103,44 +103,46 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import webbrowser as web
 
 class Chatbot:
+    '''
+    Chatbot models & interface integration
+    '''
     def __init__(self, lang='en'):
 
-
+        # Launch interface
         web.open("https://gonzalorecio.com/chatbot/robot.html")
-
-        print('Loading model and tokenizers...')
 
         # Initialize chatbot interface
         self.face = ChatbotFace()
+        loading_text = 'Wait a moment. Loading the system' if lang == 'en' else 'Espera un momento. Cargando el sistema'
+        self.face.status_custom(loading_text)
 
         # Define chatbot voice
         self.define_voice(lang=lang)
 
         # Load model
+        print('Loading model and tokenizers...') if lang == 'en' else print('Cargando el modelo y tokenizers...')
         self.model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-        #self.tokenizer = AutoTokenizer.from_pretrained("ncoop57/DiGPTame-medium")
-        #self.model = AutoModelWithLMHead.from_pretrained("ncoop57/DiGPTame-medium")
 
         # Display instructions:
-        #self.initial_instructions(lang=lang)
+        self.initial_instructions(lang=lang)
 
         # Reset chatbot
         self.reset_chatbot(lang=lang)
-        #self.speak('Welcome to our chatbot interface. In a few seconds you can start a conversation with me. Now I am loading the system, I will be ready in a second!')
 
         #Welcome message
-        # if lang == 'en':
-        #     self.face.status_custom('Hey I am chatbot!')
-        #     self.speak('Hey! I am a chatbot developed by Gonzalo Recio and Jana Reventós.   '
-        #                'In a few seconds you can start a conversation with me.   '
-        #                'In the blink of an eye, I will be ready.')
-        # else:
-        #     self.face.status_custom('Hola, soy un chatbot!')
-        #     self.speak(
-        #         'Hola! Soy un chatbot creado por Gonzalo Recio y Jana Reventós.   '
-        #         'En unos segundos podrás empezar una conversación conmigo.   '
-        #        'Estaré preparado en menos de un abrir y cerrar de ojos!')
+
+        if lang == 'en':
+            self.face.status_custom('Hey I am chatbot!')
+            self.speak('Hey! I am a chatbot developed by Gonzalo Recio and Jana Reventós.   '
+                       'In a few seconds you can start a conversation with me.   '
+                       'In the blink of an eye, I will be ready.')
+        else:
+            self.face.status_custom('Hola, soy un chatbot!')
+            self.speak(
+                'Hola! Soy un chatbot creado por Gonzalo Recio y Jana Reventós.   '
+                'En unos segundos podrás empezar una conversación conmigo.   '
+               'Estaré preparado en menos de un abrir y cerrar de ojos!')
 
         print('Chatbot ready.')
 
@@ -148,9 +150,9 @@ class Chatbot:
     def initial_instructions(self,lang='en'):
 
         if lang == 'en':
-            text1 = 'Please read the following instructions (1-8) before starting the conversation:'
+            text1 = 'Please read the following points (1-8) before starting the conversation:'
         else:
-            text1 = 'Porfavor lea las siguientes instrucciones (1-8) antes de empezar la conversación:'
+            text1 = 'Porfavor lea siguientes indicaciones (1-8) antes de empezar la conversación:'
         self.face.status_custom(text1)
         self.speak(text1)
 
@@ -192,7 +194,7 @@ class Chatbot:
         if lang == 'en':
             inst5 = '5. Please wait while the chatbot is thinking an answer. You will read the word THINKING in the screen.'
         else:
-            inst5 = '5. Porfavor, espera a que el chatbot pinse su respuesta. Vas a leer la palabra THINKING en la pantalla.'
+            inst5 = '5. Porfavor, espera a que el chatbot piense su respuesta. Vas a leer la palabra THINKING en la pantalla.'
         self.face.status_custom(inst5)
         self.speak(inst5)
 
@@ -214,17 +216,17 @@ class Chatbot:
 
         # Instruction 8
         if lang == 'en':
-            inst8 = '8. At the end, a screen with a questionnaire to fill out will be displayed.'
+            inst8 = '8. At the end, a screen with a questionnaire that must be fill out will be displayed.'
         else:
-            inst8 = '8. Al final de la conversación, un cuestionario a rellenar aparecerá. .'
+            inst8 = '8. Al final de la conversación, un cuestionario que deberá rellenar aparecerá. .'
         self.face.status_custom(inst8)
         self.speak(inst8)
 
     def define_voice(self,lang='en'):
         if lang == 'es':
-            self.voice = 14  # 0: spanish female, 1: english female, 2: english male
+            self.voice = 14  # 14: spanish male
         else:
-            self.voice = 0  # 0: spanish female, 1: english female, 2: english male
+            self.voice = 0  # 0:english male
 
     def reset_chatbot(self, lang='en'):
         self.chat_history_ids = self.tokenizer.encode(self.tokenizer.bos_token, return_tensors='pt')
@@ -232,6 +234,7 @@ class Chatbot:
         self.lang = lang
 
     def listen_and_get_question(self):
+        self.face.change_mood('neutral')
         self.face.status_listening()
         lang = 'en-US' if self.lang == 'en' else 'es-ES'
         question = speech.speech_to_audio()
@@ -261,9 +264,7 @@ class Chatbot:
         return True
 
     def speak(self, text):
-        self.face.change_mood('happy')
         speech.text_to_speech(text, speed = 200, vol=1.0, voice=self.voice)
-        self.face.change_mood('neutral')
 
     def translate(self, text, lang):
         translated_text = self.translator.translate(text, lang_tgt=lang)
@@ -273,8 +274,12 @@ class Chatbot:
 
     def no_understand(self):
         text = "Sorry, I couldn't understand you"
+
         if self.lang == 'es':
             text = self.translate(text, lang='es')
+
+        print(text)
+        self.face.change_mood('confused')
         self.speak(text)
 
     def run_chat(self):
@@ -284,11 +289,12 @@ class Chatbot:
         self.reset_chatbot(lang=self.lang)
         question = ''
         previous_answer =''
-        while (question != 'goodbye'):
+        bye_string = 'goodbye' if self.lang == 'en' else 'adios'
+        while (question != bye_string):
             question = self.listen_and_get_question()
             if question is None:
-                print('Fallo')
                 self.no_understand()
+
                 continue
             print('User:', self.question_original)
             answer = self.generate_answer(question)
@@ -296,12 +302,12 @@ class Chatbot:
             self.face.status_custom(answer)
             print('Chatbot:', answer)
             self.speak(answer)
+
             if answer != previous_answer:
                 previous_answer = answer
                 self.chat_history_ids = self.chat_history_ids[:, -50:]
                 continue
             else:
-
                 if self.lang == 'en':
                     self.face.status_custom('This conversation has ended')
                     self.speak('This conversation has ended. It has been a pleasure talking with you. Thank you! ')
