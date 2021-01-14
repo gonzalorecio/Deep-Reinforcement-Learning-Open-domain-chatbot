@@ -294,7 +294,7 @@ class Chatbot:
             answer = self.generate_answer(question)
             self.face.mood_prediction(answer)
             self.face.status_custom(answer)
-            print('CIRREL chatbot:', answer)
+            print('Chatbot:', answer)
             self.speak(answer)
             if answer != previous_answer:
                 previous_answer = answer
