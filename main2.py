@@ -62,15 +62,15 @@ class ChatbotFace:
 
         self.status_custom(utterance)
 
-        if 'how' or 'what' or 'why' or 'which' or 'when' in utterance:
-            self.change_mood('confused')
-        else:
-            if score <= 0.55 and score > 0.45:
-                self.change_mood('neutral')
-            elif score <= 1 and score > 0.55:
-                self.change_mood('happy')
-            elif score <= 0.45 and score > 0:
-                self.change_mood('sad')
+        # if 'how' or 'what' or 'why' or 'which' or 'when' in utterance:
+        #     self.change_mood('confused')
+        # else:
+        if score <= 0.55 and score > 0.45:
+            self.change_mood('neutral')
+        elif score <= 1 and score > 0.55:
+            self.change_mood('happy')
+        elif score <= 0.45 and score > 0:
+            self.change_mood('sad')
 
 
     def start_blinking(self):
@@ -106,7 +106,7 @@ class Chatbot:
     '''
     Chatbot models & interface integration
     '''
-    def __init__(self, lang='en'):
+    def __init__(self, lang='en',RL = True):
 
         # Launch interface
         web.open("https://gonzalorecio.com/chatbot/robot.html")
@@ -121,11 +121,22 @@ class Chatbot:
 
         # Load model
         print('Loading model and tokenizers...') if lang == 'en' else print('Cargando el modelo y tokenizers...')
-        self.model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
-        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
+        self.model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
+        self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
+
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.model.to(device)
+
+        # Load RL model
+        self.model_type = RL
+        if self.model_type == True:
+            print('Using RL model')
+            self.model.load_state_dict(torch.load("checkpoint_60", map_location=torch.device('cpu')))
+            self.model.eval()
+
 
         # Display instructions:
-        self.initial_instructions(lang=lang)
+        #self.initial_instructions(lang=lang)
 
         # Reset chatbot
         self.reset_chatbot(lang=lang)
@@ -150,9 +161,9 @@ class Chatbot:
     def initial_instructions(self,lang='en'):
 
         if lang == 'en':
-            text1 = 'Please read the following points (1-8) before starting the conversation:'
+            text1 = 'Please read the following points (1-9) before starting the conversation:'
         else:
-            text1 = 'Porfavor lea siguientes indicaciones (1-8) antes de empezar la conversación:'
+            text1 = 'Porfavor lea las siguientes indicaciones (1-9) antes de empezar la conversación:'
         self.face.status_custom(text1)
         self.speak(text1)
 
@@ -216,11 +227,19 @@ class Chatbot:
 
         # Instruction 8
         if lang == 'en':
-            inst8 = '8. At the end, a screen with a questionnaire that must be fill out will be displayed.'
+            inst8 = '8. To end the conversation with the chatbot only say the word "GOODBYE".'
         else:
-            inst8 = '8. Al final de la conversación, un cuestionario que deberá rellenar aparecerá. .'
+            inst8 = '8. Para terminar la conversación con el chatbot pronuncie únicamente la palabra "ADIÓS".'
         self.face.status_custom(inst8)
         self.speak(inst8)
+
+        # Instruction 9
+        if lang == 'en':
+            inst9 = '9. At the end, a screen with a questionnaire that must be fill out will be displayed.'
+        else:
+            inst9 = '9. Al final de la conversación, un cuestionario que deberá rellenar aparecerá. .'
+        self.face.status_custom(inst9)
+        self.speak(inst9)
 
     def define_voice(self,lang='en'):
         if lang == 'es':
@@ -251,8 +270,12 @@ class Chatbot:
         self.face.status_thinking()
         question_ids = self.tokenizer.encode(question + self.tokenizer.eos_token, return_tensors='pt')
         input_ids = torch.cat([self.chat_history_ids, question_ids], dim=-1)
-        self.chat_history_ids = self.model.generate(input_ids, max_length=1000,
-                                                    pad_token_id=self.tokenizer.eos_token_id)
+
+        self.chat_history_ids = self.model.generate(input_ids, max_length=500,
+                                                    pad_token_id=self.tokenizer.eos_token_id,
+                                                    no_repeat_ngram_size = 3,
+                                                    repetition_penalty = 1.15)
+
         answer_ids = self.chat_history_ids[:, input_ids.shape[-1]:][0]
         text = self.decode(answer_ids)
         if self.lang == 'es':
@@ -289,13 +312,17 @@ class Chatbot:
         self.reset_chatbot(lang=self.lang)
         question = ''
         previous_answer =''
-        bye_string = 'goodbye' if self.lang == 'en' else 'adios'
-        while (question != bye_string):
+        bye_string = 'goodbye' if self.lang == 'en' else 'adiós'
+        print(bye_string)
+        self.question_original =''
+        while self.question_original != bye_string:
             question = self.listen_and_get_question()
+            self.face.change_mood('happy')
+
             if question is None:
                 self.no_understand()
-
                 continue
+
             print('User:', self.question_original)
             answer = self.generate_answer(question)
             self.face.mood_prediction(answer)
@@ -303,29 +330,39 @@ class Chatbot:
             print('Chatbot:', answer)
             self.speak(answer)
 
-            if answer != previous_answer:
+            if previous_answer != answer:
                 previous_answer = answer
                 self.chat_history_ids = self.chat_history_ids[:, -50:]
                 continue
             else:
-                if self.lang == 'en':
-                    self.face.status_custom('This conversation has ended')
-                    self.speak('This conversation has ended. It has been a pleasure talking with you. Thank you! ')
-                    print('Conversation ended')
-                else:
-                    self.face.status_custom('Esta conversación ha terminado.')
-                    self.speak('Esta conversación ha terminado. Ha sido un placer hablar contigo. Muchas gracias!')
-                    print('Conversación terminada.')
+               break
 
-                break
+
         if self.lang == 'en':
-            web.open('https://docs.google.com/forms/d/e/1FAIpQLSfZ4U1pSPwSFOsC3bl46QtRW3HoH1-6XQbUOMH1u0Wjx4lnfg/viewform?usp=sf_link')
+            self.face.status_custom('This conversation has ended')
+            self.speak('This conversation has ended. It has been a pleasure talking with you. Thank you! ')
+            print('Conversation ended')
         else:
-            web.open("https://docs.google.com/forms/d/e/1FAIpQLSdg68q2xtkrdaabnCpIjIQylo7h3Opywpkjy-OqXSCSeq0_cg/viewform?usp=sf_link")
+            self.face.status_custom('Esta conversación ha terminado.')
+            self.speak('Esta conversación ha terminado. Ha sido un placer hablar contigo. Muchas gracias!')
+            print('Conversación terminada.')
+
+
+        if self.model_type == False:
+            if self.lang == 'en':
+                web.open('https://docs.google.com/forms/d/e/1FAIpQLSfZ4U1pSPwSFOsC3bl46QtRW3HoH1-6XQbUOMH1u0Wjx4lnfg/viewform?usp=sf_link')
+            else:
+                web.open("https://docs.google.com/forms/d/e/1FAIpQLSdg68q2xtkrdaabnCpIjIQylo7h3Opywpkjy-OqXSCSeq0_cg/viewform?usp=sf_link")
+        else:
+            if self.lang == 'en':
+                web.open('https://docs.google.com/forms/d/e/1FAIpQLSc9yL8sgFipSmopnMb4kfjhR3yZqUfmqhyeb9Au8kEBPipn1g/viewform?usp=sf_link')
+            else:
+                web.open("https://docs.google.com/forms/d/e/1FAIpQLSefD0I0GyPDezAWJ9Wr666zuQjkK3cOBgu8QBXe-MhIwrPP5g/viewform?usp=sf_link")
+
         self.face.status_none()
             # self.reset_chatbot(lang=self.lang)
             # print(self.chat_history_ids)
 
 
-chatbot = Chatbot(lang='es')
+chatbot = Chatbot(lang='es',RL = True)
 chatbot.run_chat()
