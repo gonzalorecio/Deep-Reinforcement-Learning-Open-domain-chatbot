@@ -9,6 +9,21 @@ class ChatbotFace:
     '''Chatbot face according to sentiment analysis. '''
     chatbot_mood_API = 'https://chatbot-mood.herokuapp.com/mood'
     chatbot_status_API = 'https://chatbot-mood.herokuapp.com/internal_state'
+    
+    def __init__(self):
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        bert = BertModel.from_pretrained('bert-base-uncased')
+        model_path = 'BERT_sentiment.pt'
+        self.sent_model = BERTGRUSentiment(bert,
+                                 hidden_dim=256,
+                                 output_dim=1,
+                                 n_layers=2,
+                                 bidirectional=True,
+                                 dropout=0.25)
+        self.sent_model.load_state_dict(torch.load(model_path))
+        self.sent_model = self.sent_model.to(self.device)
+        self.sent_model.eval()
 
     def change_mood(self, mood):
         req_obj = {'action': mood}
@@ -23,38 +38,26 @@ class ChatbotFace:
         self.change_status(text)
 
     def predict_sentiment(self, sentence):
-        model_path = 'BERT_sentiment.pt'
         max_input_length =  512
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        bert = BertModel.from_pretrained('bert-base-uncased')
-        model = BERTGRUSentiment(bert,
-                                 hidden_dim=256,
-                                 output_dim=1,
-                                 n_layers=2,
-                                 bidirectional=True,
-                                 dropout=0.25)
-        model.to(device)
-        model.load_state_dict(torch.load(model_path,map_location=torch.device('cpu')))
-        model.eval()
-        tokens = tokenizer.tokenize(sentence)
+        
+        tokens = self.tokenizer.tokenize(sentence)
         tokens = tokens[:max_input_length - 2]
 
         # Special tokens:
-        init_token = tokenizer.cls_token  # Initiate sentence
-        eos_token = tokenizer.sep_token  # End of sentence
+        init_token = self.tokenizer.cls_token  # Initiate sentence
+        eos_token = self.tokenizer.sep_token  # End of sentence
 
         # Special tokens idx
-        init_token_idx = tokenizer.convert_tokens_to_ids(init_token)
-        eos_token_idx = tokenizer.convert_tokens_to_ids(eos_token)
+        init_token_idx = self.tokenizer.convert_tokens_to_ids(init_token)
+        eos_token_idx = self.tokenizer.convert_tokens_to_ids(eos_token)
 
         # Sentence index
-        indexed = [init_token_idx] + tokenizer.convert_tokens_to_ids(tokens) + [eos_token_idx]
+        indexed = [init_token_idx] + self.tokenizer.convert_tokens_to_ids(tokens) + [eos_token_idx]
 
         # To tensor
-        tensor = torch.LongTensor(indexed).to(device)
-        tensor = tensor.unsqueeze(0)
-        prediction = torch.sigmoid(model(tensor))
+        tensor = torch.LongTensor(indexed).to(self.device)
+        tensor = tensor.unsqueeze(0).to(self.device)
+        prediction = torch.sigmoid(self.sent_model(tensor))
 
         return prediction.item()
 
@@ -109,7 +112,7 @@ class Chatbot:
     Chatbot models & interface integration
     '''
     def __init__(self, lang='en',RL = True, user_id = 'name',age = 64, instructions = True):
-
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         # Launch interface
         web.open("https://gonzalorecio.com/chatbot/robot.html")
         self.user_id = user_id
@@ -127,14 +130,14 @@ class Chatbot:
         self.model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
         self.tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.model.to(device)
+        self.model.to(self.device)
 
         # Load RL model
         self.model_type = RL
         if self.model_type == True:
             print('Using RL model')
-            self.model.load_state_dict(torch.load("checkpoint_60", map_location=torch.device('cpu')))
+            self.model.load_state_dict(torch.load("models/checkpoint_50", map_location=torch.device(self.device)))
+            self.model = self.model.to(self.device)
             self.model.eval()
 
 
@@ -272,15 +275,15 @@ class Chatbot:
 
     def generate_answer(self, question):
         self.face.status_thinking()
-        question_ids = self.tokenizer.encode(question + self.tokenizer.eos_token, return_tensors='pt')
-        input_ids = torch.cat([self.chat_history_ids, question_ids], dim=-1)
+        question_ids = self.tokenizer.encode(question + self.tokenizer.eos_token, return_tensors='pt').to(self.device)
+        input_ids = torch.cat([self.chat_history_ids, question_ids], dim=-1).to(self.device)
 
         self.chat_history_ids = self.model.generate(input_ids, max_length=500,
                                                     pad_token_id=self.tokenizer.eos_token_id,
                                                     no_repeat_ngram_size = 3,
                                                     repetition_penalty = 1.15)
 
-        answer_ids = self.chat_history_ids[:, input_ids.shape[-1]:][0]
+        answer_ids = self.chat_history_ids[:, input_ids.shape[-1]:][0].to('cpu')
         text = self.decode(answer_ids)
         if self.lang == 'es':
             text = self.translate(text, lang='es')
@@ -347,7 +350,7 @@ class Chatbot:
                 dialogue_len+=1
                 continue
             else:
-               break
+                break
 
 
         unigrams, bigrams = diversity(generated_answers)
