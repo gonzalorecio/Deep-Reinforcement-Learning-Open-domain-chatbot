@@ -3,6 +3,7 @@ import requests
 from sentiments.BERTGRU_model import BERTGRUSentiment
 from evaluation import diversity
 import pandas as pd
+import time
 
 class ChatbotFace:
     '''Chatbot face according to sentiment analysis. '''
@@ -107,11 +108,12 @@ class Chatbot:
     '''
     Chatbot models & interface integration
     '''
-    def __init__(self, lang='en',RL = True, user_id = 'name',instructions = True):
+    def __init__(self, lang='en',RL = True, user_id = 'name',age = 64, instructions = True):
 
         # Launch interface
         web.open("https://gonzalorecio.com/chatbot/robot.html")
         self.user_id = user_id
+        self.age = age
         # Initialize chatbot interface
         self.face = ChatbotFace()
         loading_text = 'Wait a moment. Loading the system' if lang == 'en' else 'Espera un momento. Cargando el sistema'
@@ -308,7 +310,7 @@ class Chatbot:
         self.speak(text)
 
     def run_chat(self):
-
+        start = time.time()
         self.face.change_mood('neutral')
         # Chatbot welcome
         self.reset_chatbot(lang=self.lang)
@@ -351,9 +353,10 @@ class Chatbot:
         unigrams, bigrams = diversity(generated_answers)
         bigrams_count = list(bigrams.values())
         bigrams_keys = list(bigrams.keys())
+        end = time.time()
 
-        results.append([self.user_id,dialogue_len,unigrams,bigrams_keys,bigrams_count])
-        df_results = pd.DataFrame(results,columns = ['user_id', 'dialogue_len','unigrams','bigrams','bigrams_values'])
+        results.append([self.user_id,self.age, dialogue_len,round(end-start,2),unigrams,len(unigrams),bigrams_keys,bigrams_count,len(bigrams)])
+        df_results = pd.DataFrame(results,columns = ['user_id', 'age','dialogue_len','duration','unigrams','len_uni','bigrams','bigrams_values','len_bigrams'])
         df_results.to_csv('results/'+ self.user_id +'.csv', index=False)
 
 
@@ -384,6 +387,6 @@ class Chatbot:
             # print(self.chat_history_ids)
 
 
-chatbot = Chatbot(lang='es',RL = True,user_id='RL-Manu',instructions=False)
+chatbot = Chatbot(lang='es',RL = True,user_id='RL-Manu', age = 64, instructions=False)
 chatbot.run_chat()
 
