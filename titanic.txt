@@ -1,0 +1,144 @@
+
+Episode 0: -0.4575510025024414
+----------------------------------------
+User: Did you see Titanic?
+DialoGPT: I did, but I didn't think it was that good.
+User: I saw it twelve times.
+DialoGPT: I saw it once.
+User: I have the DVD.
+DialoGPT: I have the DVD.
+User: Let's go to your home.
+DialoGPT: I have the DVD.
+User: And then we can go to my home.
+DialoGPT: I have the DVD.
+User: I always cry at the end.
+DialoGPT: I have the DVD.
+----------------------------------------
+
+Episode 20: -0.41465286839575993
+----------------------------------------
+User: Did you see Titanic?
+DialoGPT: I did, but I didn't think it was that good.
+User: I saw it twelve times.
+DialoGPT: I saw it once and I thought it was pretty good.
+User: I have the DVD.
+DialoGPT: I have the DVD.
+User: Let's go to your home.
+DialoGPT: I have the DVD.
+User: And then we can go to my home.
+DialoGPT: I have the DVD.
+User: I always cry at the end.
+DialoGPT: I have the DVD.
+----------------------------------------
+
+Episode 40: -0.38647508766593003
+----------------------------------------
+User: Did you see Titanic?
+DialoGPT: I did, but I didn't think it was that good.
+User: I saw it twelve times.
+DialoGPT: I saw it once and it was good.
+User: I have the DVD.
+DialoGPT: I have the DVD.
+User: Let's go to your home.
+DialoGPT: I have the DVD.
+User: And then we can go to my home.
+DialoGPT: I have the DVD.
+User: I always cry at the end.
+DialoGPT: I have the DVD.
+----------------------------------------
+
+Episode 60: -0.388552013967858
+----------------------------------------
+User: Did you see Titanic?
+DialoGPT: I did, but I didn't think it was that good.
+User: I saw it twelve times.
+DialoGPT: I saw it once and it was good.
+User: I have the DVD.
+DialoGPT: I have the DVD.
+User: Let's go to your home.
+DialoGPT: I have the DVD.
+User: And then we can go to my home.
+DialoGPT: I have the DVD.
+User: I always cry at the end.
+DialoGPT: I have the DVD.
+----------------------------------------
+
+Episode 80: -0.3965029951966839
+----------------------------------------
+User: Did you see Titanic?
+DialoGPT: I did, but I didn't think it was that good.
+User: I saw it twelve times.
+DialoGPT: I saw it once and it was terrible.
+User: I have the DVD.
+DialoGPT: I have the DVD.
+User: Let's go to your home.
+DialoGPT: I have the DVD.
+User: And then we can go to my home.
+DialoGPT: And then we can go to your home.and then we can go to your home.and then we can go to your home.and then we can go to your home.and then we can go to your home.and then we can go to your home.and then...
+User: I always cry at the end.
+DialoGPT: I cry at the end of every movie.
+----------------------------------------
+
+Episode 100: -0.39618537125020925
+----------------------------------------
+User: Did you see Titanic?
+DialoGPT: I did, but I didn't think it was that good.
+User: I saw it twelve times.
+DialoGPT: I saw it once and it was terrible.
+User: I have the DVD.
+DialoGPT: I have the DVD.
+User: Let's go to your home.
+DialoGPT: I have the DVD.
+User: And then we can go to my home.
+DialoGPT: And then we can go to your home.and then we can go to your home.and then we can go to your home.and then we can go to your home.and then we can go to your home.and then we can go to your home.and then...
+User: I always cry at the end.
+DialoGPT: I cry at the end of every movie.
+----------------------------------------
+
+Episode 120: -0.39117023595108474
+----------------------------------------
+User: Did you see Titanic?
+DialoGPT: No, but I've heard of it. I'll check it out. Thanks!
+User: I saw it twelve times.
+DialoGPT: I saw it once and it was amazing.
+User: I have the DVD.
+DialoGPT: I have the DVD.
+User: Let's go to your home.
+DialoGPT: Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go.
+User: And then we can go to my home.
+DialoGPT: And then we can go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go to his home.Let's go
+User: I always cry at the end.
+DialoGPT: I cry at the end of every movie.
+----------------------------------------
+
+Episode 140: -0.3847525451622956
+----------------------------------------
+User: Did you see Titanic?
+DialoGPT: No, but I've heard of it. What's it about?
+User: I saw it twelve times.
+DialoGPT: I saw it once. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Titanic.
+User: I have the DVD.
+DialoGPT: I have the DVD.
+User: Let's go to your home.
+DialoGPT: Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.
+User: And then we can go to my home.
+DialoGPT: And then we can go to your home.And then we can go to your home.And then we can go to your home.And then we can go to your home.And then we can go to your home.AND THEN WE CAN GO HOME!
+User: I always cry at the end.
+DialoGPT: I cry at the end of every movie.
+----------------------------------------
+
+Episode 160: -0.37637241934397203
+----------------------------------------
+User: Did you see Titanic?
+DialoGPT: No, but I've heard of it. What's it about?
+User: I saw it twelve times.
+DialoGPT: I saw it once. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Twice. Titanic.
+User: I have the DVD.
+DialoGPT: I have the DVD.
+User: Let's go to your home.
+DialoGPT: Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.Let's go to your home.
+User: And then we can go to my home.
+DialoGPT: And then we can go to your home.And then we can go to your home.And then we can go to your home.And then we can go to your home.And then we can go to your home.AND THEN WE CAN GO HOME!
+User: I always cry at the end.
+DialoGPT: I cry at the end of every movie.
+----------------------------------------
