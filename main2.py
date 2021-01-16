@@ -1,7 +1,8 @@
 from transformers import  BertModel, BertTokenizer
 import requests
 from sentiments.BERTGRU_model import BERTGRUSentiment
-
+from evaluation import diversity
+import pandas as pd
 
 class ChatbotFace:
     '''Chatbot face according to sentiment analysis. '''
@@ -106,11 +107,11 @@ class Chatbot:
     '''
     Chatbot models & interface integration
     '''
-    def __init__(self, lang='en',RL = True):
+    def __init__(self, lang='en',RL = True, user_id = 'name',instructions = True):
 
         # Launch interface
         web.open("https://gonzalorecio.com/chatbot/robot.html")
-
+        self.user_id = user_id
         # Initialize chatbot interface
         self.face = ChatbotFace()
         loading_text = 'Wait a moment. Loading the system' if lang == 'en' else 'Espera un momento. Cargando el sistema'
@@ -136,7 +137,8 @@ class Chatbot:
 
 
         # Display instructions:
-        #self.initial_instructions(lang=lang)
+        if instructions:
+            self.initial_instructions(lang=lang)
 
         # Reset chatbot
         self.reset_chatbot(lang=lang)
@@ -315,6 +317,12 @@ class Chatbot:
         bye_string = 'goodbye' if self.lang == 'en' else 'adiós'
         print(bye_string)
         self.question_original =''
+
+        # Evaluation
+        dialogue_len  = 0
+        generated_answers = []
+        results = []
+
         while self.question_original != bye_string:
             question = self.listen_and_get_question()
             self.face.change_mood('happy')
@@ -325,6 +333,7 @@ class Chatbot:
 
             print('User:', self.question_original)
             answer = self.generate_answer(question)
+            generated_answers.append(answer)
             self.face.mood_prediction(answer)
             self.face.status_custom(answer)
             print('Chatbot:', answer)
@@ -333,9 +342,20 @@ class Chatbot:
             if previous_answer != answer:
                 previous_answer = answer
                 self.chat_history_ids = self.chat_history_ids[:, -50:]
+                dialogue_len+=1
                 continue
             else:
                break
+
+
+        unigrams, bigrams = diversity(generated_answers)
+        bigrams_count = list(bigrams.values())
+        bigrams_keys = list(bigrams.keys())
+
+        results.append([self.user_id,dialogue_len,unigrams,bigrams_keys,bigrams_count])
+        df_results = pd.DataFrame(results,columns = ['user_id', 'dialogue_len','unigrams','bigrams','bigrams_values'])
+        df_results.to_csv('results/'+ self.user_id +'.csv', index=False)
+
 
 
         if self.lang == 'en':
@@ -364,5 +384,6 @@ class Chatbot:
             # print(self.chat_history_ids)
 
 
-chatbot = Chatbot(lang='es',RL = True)
+chatbot = Chatbot(lang='es',RL = True,user_id='RL-Manu',instructions=False)
 chatbot.run_chat()
+
