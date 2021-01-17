@@ -4,6 +4,7 @@ from sentiments.BERTGRU_model import BERTGRUSentiment
 from evaluation import diversity
 import pandas as pd
 import time
+from collections import Counter
 
 from speech import google_speech as speech
 import torch
@@ -12,6 +13,16 @@ from google_trans_new import google_translator
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import webbrowser as web
+
+def is_rare_answer(text):
+    words = text.split(' ')
+    c = Counter(words)
+    if c.most_common()[0][1] > 7:
+        return True
+    for w in words:
+        if len(w) > 15:
+            return True
+    return False
 
 class ChatbotFace:
     '''Chatbot face according to sentiment analysis. '''
@@ -272,7 +283,7 @@ class Chatbot:
         self.face.status_thinking()
         question_ids = self.tokenizer.encode(question + self.tokenizer.eos_token, return_tensors='pt').to(self.device)
         input_ids = torch.cat([self.chat_history_ids, question_ids], dim=-1).to(self.device)
-
+        self.model.eval()
         self.chat_history_ids = self.model.generate(input_ids, max_length=500,
                                                     pad_token_id=self.tokenizer.eos_token_id,
                                                     no_repeat_ngram_size = 3,
@@ -329,12 +340,15 @@ class Chatbot:
             question = self.listen_and_get_question()
             self.face.change_mood('neutral')
 
-            if question is None:
+            if question is None or self.question_original is None:
                 self.no_understand()
                 continue
 
             print('User:', self.question_original)
             answer = self.generate_answer(question)
+            if is_rare_answer(answer):
+                print('rare', answer)
+                answer = ' '.join(answer.split(' ')[:15])
             generated_answers.append(answer)
             self.face.mood_prediction(self.original_answer) # should be in english!!!
             self.face.status_custom(answer)
