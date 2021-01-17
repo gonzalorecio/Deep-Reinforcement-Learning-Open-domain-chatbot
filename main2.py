@@ -5,6 +5,14 @@ from evaluation import diversity
 import pandas as pd
 import time
 
+from speech import google_speech as speech
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelWithLMHead
+from google_trans_new import google_translator
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+import webbrowser as web
+
 class ChatbotFace:
     '''Chatbot face according to sentiment analysis. '''
     chatbot_mood_API = 'https://chatbot-mood.herokuapp.com/mood'
@@ -14,14 +22,14 @@ class ChatbotFace:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         bert = BertModel.from_pretrained('bert-base-uncased')
-        model_path = 'BERT_sentiment.pt'
+        model_path = 'models/BERT_sentiment.pt'
         self.sent_model = BERTGRUSentiment(bert,
                                  hidden_dim=256,
                                  output_dim=1,
                                  n_layers=2,
                                  bidirectional=True,
                                  dropout=0.25)
-        self.sent_model.load_state_dict(torch.load(model_path))
+        self.sent_model.load_state_dict(torch.load(model_path,map_location=torch.device('cpu')))
         self.sent_model = self.sent_model.to(self.device)
         self.sent_model.eval()
 
@@ -64,8 +72,8 @@ class ChatbotFace:
     def mood_prediction(self, utterance):
 
         score = self.predict_sentiment(utterance)
-
-        self.status_custom(utterance)
+        print(score)
+        #self.status_custom(utterance)
 
         # if 'how' or 'what' or 'why' or 'which' or 'when' in utterance:
         #     self.change_mood('confused')
@@ -97,16 +105,6 @@ class ChatbotFace:
 
 
 
-
-# SPEECH
-from speech import google_speech as speech
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelWithLMHead
-from google_trans_new import google_translator
-import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-import webbrowser as web
-
 class Chatbot:
     '''
     Chatbot models & interface integration
@@ -117,6 +115,7 @@ class Chatbot:
         web.open("https://gonzalorecio.com/chatbot/robot.html")
         self.user_id = user_id
         self.age = age
+
         # Initialize chatbot interface
         self.face = ChatbotFace()
         loading_text = 'Wait a moment. Loading the system' if lang == 'en' else 'Espera un momento. Cargando el sistema'
@@ -136,7 +135,7 @@ class Chatbot:
         self.model_type = RL
         if self.model_type == True:
             print('Using RL model')
-            self.model.load_state_dict(torch.load("models/checkpoint_50", map_location=torch.device(self.device)))
+            self.model.load_state_dict(torch.load("models/checkpoint_60", map_location=torch.device(self.device)))
             self.model = self.model.to(self.device)
             self.model.eval()
 
@@ -149,7 +148,6 @@ class Chatbot:
         self.reset_chatbot(lang=lang)
 
         #Welcome message
-
         if lang == 'en':
             self.face.status_custom('Hey I am chatbot!')
             self.speak('Hey! I am a chatbot developed by Gonzalo Recio and Jana Reventós.   '
@@ -157,10 +155,7 @@ class Chatbot:
                        'In the blink of an eye, I will be ready.')
         else:
             self.face.status_custom('Hola, soy un chatbot!')
-            self.speak(
-                'Hola! Soy un chatbot creado por Gonzalo Recio y Jana Reventós.   '
-                'En unos segundos podrás empezar una conversación conmigo.   '
-               'Estaré preparado en menos de un abrir y cerrar de ojos!')
+            #self.speak('Hola! Soy un chatbot creado por Gonzalo Recio y Jana Reventós.  En unos segundos podrás empezar una conversación conmigo.Estaré preparado en menos de un abrir y cerrar de ojos!')
 
         print('Chatbot ready.')
 
@@ -285,6 +280,8 @@ class Chatbot:
 
         answer_ids = self.chat_history_ids[:, input_ids.shape[-1]:][0].to('cpu')
         text = self.decode(answer_ids)
+        self.original_answer = text
+        print(self.original_answer)
         if self.lang == 'es':
             text = self.translate(text, lang='es')
         self.face.status_none()
@@ -330,7 +327,7 @@ class Chatbot:
 
         while self.question_original != bye_string:
             question = self.listen_and_get_question()
-            self.face.change_mood('happy')
+            self.face.change_mood('neutral')
 
             if question is None:
                 self.no_understand()
@@ -339,7 +336,7 @@ class Chatbot:
             print('User:', self.question_original)
             answer = self.generate_answer(question)
             generated_answers.append(answer)
-            self.face.mood_prediction(answer)
+            self.face.mood_prediction(self.original_answer) # should be in english!!!
             self.face.status_custom(answer)
             print('Chatbot:', answer)
             self.speak(answer)
@@ -389,7 +386,7 @@ class Chatbot:
             # self.reset_chatbot(lang=self.lang)
             # print(self.chat_history_ids)
 
-
-chatbot = Chatbot(lang='es',RL = True,user_id='RL-Manu', age = 64, instructions=False)
+age = 2021 - int(1958) - ((int(9), int(3)) < (int(9), int(3))) - 1
+chatbot = Chatbot(lang='es',RL = True ,user_id='RL-Fini', age = age, instructions=False)
 chatbot.run_chat()
 
