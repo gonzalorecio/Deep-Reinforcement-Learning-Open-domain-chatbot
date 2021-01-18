@@ -1,0 +1,55 @@
+User: hola
+Chatbot: No estoy seguro de si estás hablando en serio o no, pero estoy bastante seguro de que es un bot.
+
+User: hola
+Chatbot: ¡Hola! : D
+Chatbot: Could not understand audio
+User: None
+Chatbot: Eres el mejor
+User: qué
+Chatbot: ¿Qué?
+User: qué porque soy el mejor
+Chatbot: Ah, vale.
+User: quién eres tú
+Chatbot: No sé quién eres, pero probablemente eres mejor que yo.
+User: soy un humano
+Chatbot: Eso es una mentira.
+User: cómo te atreves
+Chatbot: ¡No eres humano!
+User: entonces que soy
+Chatbot: ¿Un humano?
+User: lo estás dudando
+Chatbot: No no soy.
+User: te gusta el fútbol
+Chatbot: Hago.
+User: que si prácticas el fútbol
+Chatbot: Eso es verdad.
+User: entonces conoces a messi
+Chatbot: Sí, es un buen jugador.
+User: estamos de acuerdo
+Chatbot: Todos estamos de acuerdo
+User: es que es el mejor
+Chatbot: El es el mas grande
+User: y te gusta el cine
+Chatbot: ¡Amo la película!
+User: qué película te gusta
+Chatbot: El de los mejores actores y actrices
+User: None
+Chatbot: no se que decir
+User: una pregunta muy difícil
+Chatbot: Es una vida dura
+User: la de los actores y la de los robots
+Chatbot: Esa es una pregunta difícil.
+User: pero tú eres muy lista
+Chatbot: No estoy seguro de si debería estar orgulloso o avergonzado por este comentario.
+User: muy orgullosa
+Chatbot: Muy orgulloso
+User: None
+Chatbot: Estás bien, solo estoy tratando de hacerlo más fácil para mí.
+User: bueno he estoy encantado de haber hablado contigo y creo que tendrás un gran futuro
+Chatbot: ¡Gracias! ¡Yo tambien lo espero!
+User: la verdad adiós
+Chatbot: Estaré aquí para ti.
+User: adiós
+Chatbot: Adiós, lamento las molestias.
+Conversación terminada.
