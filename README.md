@@ -1,7 +1,5 @@
-# MAI-CIR
-
-## Deep Reinforcement Learning Open-domain chatbot
-Master in Artificial Intelligence - UPC Cognitive Interaction with Robots Final Project
+# Deep Reinforcement Learning Open-domain chatbot
+Master in Artificial Intelligence - UPC: Cognitive Interaction with Robots (CIR) Final Project
 
 
 
