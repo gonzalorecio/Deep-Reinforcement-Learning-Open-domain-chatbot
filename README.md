@@ -72,7 +72,7 @@ In the directiory `results` there are the quantitative results of the interactio
 
 Qualitatively, if we stop the RL process before degrading the model loses language understanding and starts generating non-sense sequences, we can see that the expressiveness of the generated utterance is much richier (episode 1 vs. 200).
 
-<img src="figures/expressivity.PNG" alt="expressivity" style="width:60%" />
+<img src="figures/expressivity.png" alt="expressivity" style="width:60%" />
 
 Furthermore, this increate of expressivity is also reflected in user engagement as observed in the experiments carried out with real users, where the average number of dialogue turns, duration of the convesation and number of unigrams and bigrams are significantly greater with our model trained with RL, compared to baseline DialoGPT:
 
