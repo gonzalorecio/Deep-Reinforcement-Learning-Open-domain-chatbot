@@ -13,7 +13,7 @@ The chatbot mainly consists of a generative language model (DialoGPT fine-tuned 
 The proposed design of the chatbot workflow starts the user producing an utterance, then the system converts the user speech to text, and this text is fed to the the dialogue generation trained with RL. The dialogue generation predicts the most adequate answer, this response is analyzed by a sentiment analysis model to change the chatbot interface mood, finally, the engine converts the answer into speech which
 is released to the user.
 
-<img src="figures/flow.PNG" alt="Interface" style="width:60%" />
+<img src="figures/flow.PNG" alt="Flow" style="width:60%" />
 
 
 
@@ -31,15 +31,15 @@ The rewards:
 
 The core idea behind our cognitive model approach is to simulate the process of two agents taking turns talking with each other. Both agents are based on the DialGPT language model, however, one of them is coded in a way that explores the state-action space and tries to maximize the reward function, while the other one is frozen (simulated agent). The whole RL training loop overview is shown below. We ran 1000 episodes (dialogue simulations) and observed that the model improves the rewards by converging around episode 800:
 
-<img src="figures/RL.PNG" alt="Interface" style="width:40%" />
-<img src="figures/RL-rewards.png" alt="Interface" style="width:28%" />
+<img src="figures/RL.PNG" alt="RL" style="width:40%" />
+<img src="figures/RL-rewards.png" alt="rewards" style="width:28%" />
 
 
 ## Architecture and interface
 The chatbot can also can display a friendly interface to show some expressions and gestures such as happiness, sadness, confusion and blinking (web-based GUI to display it in any device with web browser). This interface takes the output of the sentiment analysis model to choose the adequate expression to show.
 
 <img src="figures/interface-arch.jpg" alt="Interface" style="width:50%" />
-<img src="figures/chatbot_face.gif" alt="Interface" style="width:30%" />
+<img src="figures/chatbot_face.gif" alt="chatbot_face" style="width:30%" />
 
 
 ## Main requirements for execution
@@ -72,8 +72,8 @@ In the directiory `results` there are the quantitative results of the interactio
 
 Qualitatively, if we stop the RL process before degrading the model loses language understanding and starts generating non-sense sequences, we can see that the expressiveness of the generated utterance is much richier (episode 1 vs. 200).
 
-<img src="figures/expressivity.PNG" alt="Interface" style="width:60%" />
+<img src="figures/expressivity.PNG" alt="expressivity" style="width:60%" />
 
 Furthermore, this increate of expressivity is also reflected in user engagement as observed in the experiments carried out with real users, where the average number of dialogue turns, duration of the convesation and number of unigrams and bigrams are significantly greater with our model trained with RL, compared to baseline DialoGPT:
 
-<img src="figures/results.PNG" alt="Interface" style="width:50%" />
+<img src="figures/results.PNG" alt="results" style="width:50%" />
