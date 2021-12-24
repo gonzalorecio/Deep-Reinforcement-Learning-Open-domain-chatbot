@@ -32,7 +32,7 @@ The rewards:
 The core idea behind our cognitive model approach is to simulate the process of two agents taking turns talking with each other. Both agents are based on the DialGPT language model, however, one of them is coded in a way that explores the state-action space and tries to maximize the reward function, while the other one is frozen (simulated agent). The whole RL training loop overview is shown below. We ran 1000 episodes (dialogue simulations) and observed that the model improves the rewards by converging around episode 800:
 
 <img src="figures/RL.PNG" alt="RL" style="width:40%" />
-<img src="figures/rewards.png" alt="rewards" style="width:28%" />
+<img src="figures/rewards.png" alt="rewards" style="width:40%" />
 
 
 ## Architecture and interface
