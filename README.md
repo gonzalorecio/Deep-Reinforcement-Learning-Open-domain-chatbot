@@ -74,6 +74,6 @@ Qualitatively, if we stop the RL process before degrading the model loses langua
 
 <img src="figures/expressivity.png" alt="expressivity" style="width:60%" />
 
-Furthermore, this increate of expressivity is also reflected in user engagement as observed in the experiments carried out with real users, where the average number of dialogue turns, duration of the convesation and number of unigrams and bigrams are significantly greater with our model trained with RL, compared to baseline DialoGPT:
+Furthermore, this increase in expressivity is also reflected in user engagement as observed in the experiments carried out with real users, where the average number of dialogue turns, duration of the convesation and number of unigrams and bigrams are significantly greater with our model trained with RL, compared to baseline DialoGPT:
 
 <img src="figures/results.PNG" alt="results" style="width:50%" />
